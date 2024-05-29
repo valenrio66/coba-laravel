@@ -19,7 +19,22 @@ class LoginController extends Controller
 		$this->validator($request->all())->validate();
 
 		if (Auth::attempt($request->only('email', 'password'))) {
-			return redirect()->route('home');
+			$user = Auth::user();
+
+			switch ($user->id_role) {
+				case 1:
+					return redirect()->route('admin.dashboard');
+					break;
+				case 2:
+					return redirect()->route('pasien.dashboard');
+					break;
+				case 3:
+					return redirect()->route('doctor.dashboard');
+					break;
+				default:
+					return redirect()->route('home'); // Redirect to default page
+					break;
+			}
 		}
 
 		return back()->withErrors([
